@@ -1,0 +1,65 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Revert
+providerId: revert-api
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Unified API
+- Integrations
+- Open Source
+- Rate Limiting
+- Quotas
+description: >-
+  Revert does not publish fixed numeric rate limits for its unified API. The
+  open-source backend applies a rate-limit middleware (rateLimitMiddleware) in
+  front of the /crm, /chat, /ticket, /accounting, and /ats routers, so limits on a
+  self-hosted deployment are whatever you configure. In practice the binding
+  constraint is usually the downstream provider's own API limits (Salesforce,
+  HubSpot, Slack, Jira, etc.), since Revert proxies and normalizes calls to those
+  providers; Revert manages OAuth token refresh and retries failed calls on your
+  behalf. On the (now-retired) hosted Revert Cloud, throughput was governed by plan
+  connection allowances rather than a documented per-minute request cap.
+notes: >-
+  No numeric per-account or per-endpoint request limits are documented. On
+  self-hosted deployments, tune the rate-limit middleware and honor each downstream
+  provider's published limits. Retried/overrun requests should be handled with
+  exponential backoff on 429.
+sources:
+- https://github.com/revertinc/revert
+- https://github.com/revertinc/revert/blob/main/packages/backend/routes/index.ts
+responseCodes:
+  throttled: 429
+limits:
+- name: Unified API Requests
+  scope: account
+  metric: requests
+  limit: not published
+  notes: No fixed numeric request-rate limit is documented. Self-hosted deployments apply a configurable rate-limit middleware.
+- name: Self-Hosted Throughput
+  scope: deployment
+  metric: requests
+  limit: configurable
+  notes: Bounded by your own infrastructure and the rate-limit middleware you configure.
+- name: Downstream Provider Limits
+  scope: connection
+  metric: requests
+  limit: provider-defined
+  notes: Effective throughput per connection is capped by the underlying CRM/chat/ticketing provider's own API rate limits.
+- name: Cloud Connection Allowance
+  scope: account
+  metric: connections
+  limit: per plan (retired)
+  notes: Historical Revert Cloud metered linked connections per plan tier rather than request rate. Hosted service retired.
+policies:
+- name: Automatic Retries
+  description: Revert automatically retries failed downstream API calls to improve reliability.
+- name: Token Refresh
+  description: Revert transparently refreshes expired OAuth tokens for linked connections so calls do not fail on auth expiry.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429 responses, especially when a downstream provider throttles.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

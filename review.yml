@@ -1,0 +1,157 @@
+aid: revert-api
+name: Revert
+review:
+  question: Does Revert expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-12'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. Revert's public HTTP surface (unified CRM,
+    chat, ticketing, accounting, ATS models plus connection management and a
+    passthrough proxy) is request/response REST over HTTPS. The only server-push
+    transport is HTTP Server-Sent Events (SSE) on the OAuth connect-status
+    endpoints (/connection/integration-status/{revertPublicToken}, and the
+    per-module /chat/integration-status and /ticket/integration-status), delivered
+    via the better-sse library. SSE is a one-way HTTP streaming transport and is
+    not WebSocket. There is no ws:// or wss:// endpoint anywhere in the API.
+findings:
+  summary: |
+    Revert does not publish a documented public WebSocket API. Revert is an
+    open-source unified API for product integrations. Its API is REST over HTTPS:
+    a hosted base of https://api.revert.dev (Revert Cloud) or a self-hosted
+    deployment (default http://localhost:4001, SERVER_PORT=4001). Requests are
+    authenticated with an x-revert-api-token header plus an x-revert-t-id tenant
+    header (and an optional x-api-version). Real-time OAuth connect status is
+    delivered via HTTP Server-Sent Events (better-sse), not WebSocket. Connections
+    also emit webhooks (Svix) to consumer-registered URLs. No realtime,
+    bidirectional WebSocket (ws:// or wss://) endpoint is documented in the API or
+    the open-source backend as of the review date.
+  serviceStatus: |
+    IMPORTANT - The hosted Revert service has been retired. Revert has joined
+    Ampersand (per the banner on github.com/revertinc/revert, which directs new
+    users to docs.withampersand.com). As of 2026-07-12, revert.dev, www.revert.dev,
+    api.revert.dev, and docs.revert.dev return no DNS A records (apex has only an
+    SOA at Namecheap default nameservers registrar-servers.com; subdomains are
+    NXDOMAIN), so the hosted REST API and hosted docs are offline. The catalog
+    entry therefore documents the API from the open-source repository, which
+    remains available and self-hostable.
+  openSource: |
+    The Revert platform is open source under AGPL-3.0 (github.com/revertinc/revert,
+    last release v1.7.1, 2024-05-13) and self-hostable via Docker Compose. The
+    backend (packages/backend) exposes the same REST API described here; the unified
+    models, routes, and headers were read directly from the Fern API definition in
+    fern/definition/ and the Express route registration in
+    packages/backend/routes/index.ts.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.revert.dev
+      documented: true
+      note: Hosted Revert Cloud base (now offline). Self-hosted default is http://localhost:4001.
+    - protocol: SSE
+      scheme: https
+      documented: true
+      note: Server-Sent Events (better-sse) on connection/integration-status endpoints for OAuth connect status. One-way HTTP streaming, not WebSocket.
+    - protocol: Webhook
+      scheme: https
+      documented: true
+      note: Connection events delivered to consumer-registered webhook URLs via Svix. Server-to-endpoint HTTP, not WebSocket.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in Revert's API, Fern definition, or backend routes as of the review date.
+  endpointsConfirmedRest:
+    - GET    https://api.revert.dev/crm/ping
+    - GET    https://api.revert.dev/crm/contacts
+    - POST   https://api.revert.dev/crm/contacts
+    - GET    https://api.revert.dev/crm/contacts/{id}
+    - PATCH  https://api.revert.dev/crm/contacts/{id}
+    - POST   https://api.revert.dev/crm/contacts/search
+    - GET    https://api.revert.dev/crm/leads
+    - POST   https://api.revert.dev/crm/leads
+    - GET    https://api.revert.dev/crm/leads/{id}
+    - PATCH  https://api.revert.dev/crm/leads/{id}
+    - POST   https://api.revert.dev/crm/leads/search
+    - GET    https://api.revert.dev/crm/companies
+    - POST   https://api.revert.dev/crm/companies
+    - GET    https://api.revert.dev/crm/companies/{id}
+    - PATCH  https://api.revert.dev/crm/companies/{id}
+    - POST   https://api.revert.dev/crm/companies/search
+    - GET    https://api.revert.dev/crm/deals
+    - POST   https://api.revert.dev/crm/deals
+    - GET    https://api.revert.dev/crm/deals/{id}
+    - PATCH  https://api.revert.dev/crm/deals/{id}
+    - POST   https://api.revert.dev/crm/deals/search
+    - GET    https://api.revert.dev/crm/notes
+    - POST   https://api.revert.dev/crm/notes
+    - GET    https://api.revert.dev/crm/notes/{id}
+    - PATCH  https://api.revert.dev/crm/notes/{id}
+    - POST   https://api.revert.dev/crm/notes/search
+    - GET    https://api.revert.dev/crm/events
+    - POST   https://api.revert.dev/crm/events
+    - GET    https://api.revert.dev/crm/events/{id}
+    - PATCH  https://api.revert.dev/crm/events/{id}
+    - DELETE https://api.revert.dev/crm/events/{id}
+    - POST   https://api.revert.dev/crm/events/search
+    - GET    https://api.revert.dev/crm/tasks
+    - POST   https://api.revert.dev/crm/tasks
+    - GET    https://api.revert.dev/crm/tasks/{id}
+    - PATCH  https://api.revert.dev/crm/tasks/{id}
+    - POST   https://api.revert.dev/crm/tasks/search
+    - GET    https://api.revert.dev/crm/users
+    - POST   https://api.revert.dev/crm/users
+    - GET    https://api.revert.dev/crm/users/{id}
+    - POST   https://api.revert.dev/crm/proxy
+    - GET    https://api.revert.dev/chat/channels
+    - GET    https://api.revert.dev/chat/users
+    - POST   https://api.revert.dev/chat/message
+    - GET    https://api.revert.dev/ticket/tasks
+    - POST   https://api.revert.dev/ticket/tasks
+    - GET    https://api.revert.dev/ticket/tasks/{id}
+    - PATCH  https://api.revert.dev/ticket/tasks/{id}
+    - GET    https://api.revert.dev/ticket/users
+    - GET    https://api.revert.dev/ticket/users/{id}
+    - GET    https://api.revert.dev/ticket/comments
+    - POST   https://api.revert.dev/ticket/comments
+    - GET    https://api.revert.dev/ticket/comments/{id}
+    - PATCH  https://api.revert.dev/ticket/comments/{id}
+    - GET    https://api.revert.dev/ticket/collections
+    - POST   https://api.revert.dev/ticket/proxy
+    - GET    https://api.revert.dev/connection
+    - DELETE https://api.revert.dev/connection
+    - GET    https://api.revert.dev/connection/all
+    - POST   https://api.revert.dev/connection/webhook
+    - GET    https://api.revert.dev/connection/webhook
+    - DELETE https://api.revert.dev/connection/webhook
+    - POST   https://api.revert.dev/connection/import
+    - GET    https://api.revert.dev/metadata/crms
+  endpointsSse:
+    - GET    https://api.revert.dev/connection/integration-status/{revertPublicToken}
+    - GET    https://api.revert.dev/chat/integration-status/{publicToken}
+    - GET    https://api.revert.dev/ticket/integration-status/{publicToken}
+sources:
+  - url: https://github.com/revertinc/revert
+    type: SourceCode
+    note: AGPL-3.0 open-source unified API. README banner - "Revert has joined Ampersand" - directs new users to docs.withampersand.com.
+  - url: https://github.com/revertinc/revert/tree/main/fern/definition
+    type: APIDefinition
+    note: Fern API definition. base-path and method/path for every unified module, connection, and metadata endpoint were read here.
+  - url: https://github.com/revertinc/revert/blob/main/packages/backend/routes/index.ts
+    type: SourceCode
+    note: Express route registration - /crm, /chat, /ticket, /accounting, /ats mounts, connection/metadata via Fern register(), SSE via better-sse.
+  - url: https://docs.revert.dev/api-reference/api-reference/crm
+    type: APIReference
+    note: Historical hosted API reference (base https://api.revert.dev, headers x-revert-api-token / x-revert-t-id / x-api-version). Domain no longer resolves as of 2026-07-12.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists. Revert's own public API is
+    request/response REST plus HTTP Server-Sent Events for OAuth connect status
+    and Svix webhooks for connection events. No AsyncAPI document was created
+    because SSE is one-way HTTP streaming (not WebSocket) and the primary surface
+    is REST. The WebSocket precision answer is false. The entry also records that
+    the hosted service is retired (Revert joined Ampersand; revert.dev DNS no
+    longer resolves) while the AGPL-3.0 self-hostable repository remains the
+    grounded source for all documented endpoints.

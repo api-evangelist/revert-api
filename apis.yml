@@ -1,0 +1,197 @@
+aid: revert-api
+url: https://raw.githubusercontent.com/api-evangelist/revert-api/refs/heads/main/apis.yml
+name: Revert
+kind: company
+description: Revert is an open-source unified API for building product integrations.
+  A single set of REST endpoints normalizes third-party CRMs (Salesforce, HubSpot,
+  Pipedrive, Zoho, Close), chat/messaging (Slack, Discord, MS Teams), ticketing
+  (Jira, Trello, Linear, ClickUp), accounting, and ATS providers into unified data
+  models, while Revert manages OAuth connections, token refresh, retries, and a
+  passthrough proxy for provider-native calls. The core platform is AGPL-3.0 and
+  self-hostable via Docker Compose. NOTE - Revert has joined Ampersand; the hosted
+  service at revert.dev / api.revert.dev / docs.revert.dev no longer resolves (DNS
+  verified 2026-07-12), so the documented REST surface below is preserved from the
+  open-source repository and is usable via self-hosting. New teams are directed to
+  Ampersand (withampersand.com).
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Unified API
+- Embedded iPaaS
+- Integrations
+- Product Integrations
+- Open Source
+- CRM Integrations
+- Connectors
+- API Integration
+created: '2026-07-12'
+modified: '2026-07-12'
+specificationVersion: '0.19'
+apis:
+- aid: revert-api:revert-api-unified-crm-api
+  name: Revert Unified CRM API
+  tags:
+  - Unified API
+  - CRM
+  - Contacts
+  - Deals
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: https://docs.revert.dev/api-reference/api-reference/crm
+    type: APIReference
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  - url: collections/revert-api.postman_collection.json
+    type: PostmanCollection
+  - url: collections/revert-api.opencollection.json
+    type: OpenCollection
+  description: Unified CRM data models across Salesforce, HubSpot, Pipedrive, Zoho,
+    and Close - contacts, leads, companies, deals, notes, events, tasks, and users -
+    each with list, get, create, update, and unified search operations under /crm.
+    Authenticated with x-revert-api-token plus the x-revert-t-id tenant header.
+- aid: revert-api:revert-api-unified-chat-api
+  name: Revert Unified Chat API
+  tags:
+  - Unified API
+  - Chat
+  - Messaging
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Unified messaging models for Slack, Discord, and Microsoft Teams -
+    list channels (GET /chat/channels), list users (GET /chat/users), and post a
+    message (POST /chat/message) through one normalized interface.
+- aid: revert-api:revert-api-unified-ticketing-api
+  name: Revert Unified Ticketing API
+  tags:
+  - Unified API
+  - Ticketing
+  - Issues
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Unified ticketing models for Jira, Trello, Linear, and ClickUp -
+    tasks, users, comments, and collections under /ticket, plus a ticketing
+    passthrough proxy. Includes list/get/create/update where the provider supports it.
+- aid: revert-api:revert-api-connection-management-api
+  name: Revert Connection Management API
+  tags:
+  - Connections
+  - OAuth
+  - Integration Management
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Manage the linked third-party connections (integrations) per tenant -
+    get a connection (GET /connection), list all connections (GET /connection/all),
+    delete a connection, create/get/delete a connection webhook, bulk import
+    connections, and stream OAuth connect status via Server-Sent Events at
+    /connection/integration-status/{revertPublicToken}.
+- aid: revert-api:revert-api-metadata-api
+  name: Revert Metadata API
+  tags:
+  - Metadata
+  - App Config
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Retrieve the integrations/app configuration available for an
+    environment from its public token - GET /metadata/crms - used to drive the
+    Revert connect UI (which providers are enabled for a customer).
+- aid: revert-api:revert-api-passthrough-proxy-api
+  name: Revert Passthrough Proxy API
+  tags:
+  - Proxy
+  - Passthrough
+  - Provider Native
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Passthrough (proxy) requests to the underlying provider's native API
+    using Revert's managed connection and refreshed OAuth token - POST /crm/proxy,
+    POST /ticket/proxy, POST /accounting/proxy, POST /ats/proxy - for endpoints not
+    yet covered by a unified model.
+- aid: revert-api:revert-api-unified-accounting-api
+  name: Revert Unified Accounting API
+  tags:
+  - Unified API
+  - Accounting
+  - Beta
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Unified accounting models (accounts, expenses, vendors) and a
+    passthrough proxy under /accounting. Present in the open-source backend as an
+    additional integration category alongside CRM, chat, and ticketing.
+- aid: revert-api:revert-api-unified-ats-api
+  name: Revert Unified ATS API
+  tags:
+  - Unified API
+  - ATS
+  - Recruiting
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://github.com/revertinc/revert
+  baseURL: https://api.revert.dev
+  properties:
+  - url: https://github.com/revertinc/revert
+    type: Documentation
+  - url: openapi/revert-api-openapi.yml
+    type: OpenAPI
+  description: Unified applicant tracking system models (departments, candidates,
+    offers, jobs) and a passthrough proxy under /ats, for recruiting-tool
+    integrations. Present in the open-source backend.
+common:
+- type: DomainSecurity
+  url: security/revert-api-domain-security.yml
+- type: Authentication
+  url: authentication/revert-api-authentication.yml
+- type: GitHubOrganization
+  url: https://github.com/revertinc
+- type: LinkedIn
+  url: https://www.linkedin.com/company/revertinc
+- type: Website
+  url: https://revert.dev
+- type: Documentation
+  url: https://github.com/revertinc/revert
+- type: Plans
+  url: plans/revert-api-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/revert-api-rate-limits.yml
+- type: FinOps
+  url: finops/revert-api-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

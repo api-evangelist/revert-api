@@ -1,0 +1,94 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Revert
+providerId: revert-api
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Unified API
+- Embedded iPaaS
+- Integrations
+- Open Source
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Revert spend. Revert's platform is open source (AGPL-3.0) and free
+  to self-host - in that model the cost is your own compute, database (Postgres),
+  and Redis for running the Revert backend and connect UI, with no vendor invoice.
+  Revert Cloud was the managed offering, historically billed on the number of
+  linked connections / integrated customer accounts above a free developer tier.
+  IMPORTANT - the hosted Cloud service has been retired (Revert joined Ampersand;
+  revert.dev no longer resolves as of 2026-07-12), so the managed-billing view below
+  is historical/modeled; the live cost model today is self-hosted infrastructure.
+notes: >-
+  Cloud per-connection rates are not reconciled and the hosted billing surface no
+  longer exists. For self-hosted deployments, the dominant costs are infrastructure
+  (Node backend + Postgres + Redis) plus any paid downstream provider APIs. Teams
+  wanting a managed commercial option are directed to Ampersand.
+sources:
+- https://github.com/revertinc/revert
+- https://www.revert.dev/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Revert
+serviceCategory: Integration and iPaaS
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Revert Cloud
+  ServiceCategory: Integration and iPaaS
+  ProviderName: Revert
+  PublisherName: Revert
+  InvoiceIssuerName: Revert
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Usage-Based
+meters:
+- name: linked_connections
+  description: Number of linked third-party connections / integrated customer accounts, the historical Revert Cloud billing unit.
+  unit: connections
+  aggregation: max
+  dimensions:
+  - account
+  - environment
+  - provider
+- name: unified_api_requests
+  description: Unified API and proxy requests processed; not separately billed but a driver of downstream provider cost.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - connection
+  - module
+- name: self_hosted_compute
+  description: Infrastructure cost of running the self-hosted Revert backend, Postgres, and Redis (no Revert invoice).
+  unit: hours
+  aggregation: sum
+  dimensions:
+  - deployment
+principles:
+- name: Visibility
+  description: Track linked connections per environment and provider; on self-hosted, monitor backend/Postgres/Redis costs and downstream provider API spend.
+- name: Allocation
+  description: Map connections and environments to workloads/teams so integration cost maps to internal cost centers.
+- name: Optimization
+  description: Prefer self-hosting to avoid per-connection vendor fees when volume is high; use unified models and the proxy to consolidate calls; prune unused connections.
+- name: Accountability
+  description: Assign owners per environment/provider; review connection counts and downstream provider spend monthly.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

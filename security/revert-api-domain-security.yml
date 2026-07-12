@@ -1,0 +1,48 @@
+generated: '2026-07-12'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts (2026-07-12)
+serviceStatus: retired
+statusNote: >-
+  Revert has joined Ampersand. The hosted Revert domains no longer resolve to any
+  A record - the apex revert.dev returns only an SOA at Namecheap default
+  nameservers (dns1/dns2.registrar-servers.com) and the www/api/docs subdomains
+  return NXDOMAIN. The hosted API (api.revert.dev), app, and docs (docs.revert.dev)
+  are therefore offline as of this probe. The open-source repository on GitHub
+  remains live and is the grounded source for this catalog entry.
+hosts:
+- host: api.revert.dev
+  resolves: false
+  https: false
+  note: NXDOMAIN - no A record. Historical hosted REST API base; now offline.
+- host: docs.revert.dev
+  resolves: false
+  https: false
+  note: NXDOMAIN - no A record. Historical hosted documentation; now offline.
+- host: www.revert.dev
+  resolves: false
+  https: false
+  note: NXDOMAIN - no A record.
+- host: github.com
+  resolves: true
+  https: true
+  note: Live source of truth - github.com/revertinc/revert (AGPL-3.0). API definition and backend routes read here.
+domains:
+- domain: revert.dev
+  registered: true
+  nameservers:
+  - dns1.registrar-servers.com
+  - dns2.registrar-servers.com
+  apexARecord: false
+  soaOnly: true
+  dnssec: false
+  caa: []
+  spf: unknown
+  dmarc: unknown
+  note: >-
+    Domain is still registered but parked at registrar default nameservers with no
+    A records and no application hosts. Consistent with the hosted service having
+    been wound down after the Ampersand transition.
+sources:
+- https://github.com/revertinc/revert
+- https://dns.google/resolve?name=revert.dev
+- https://cloudflare-dns.com/dns-query?name=revert.dev

@@ -1,0 +1,205 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Revert Unified API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "apikey": {
+        "key": "x-revert-api-token",
+        "value": "{{revertApiToken}}",
+        "in": "header"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "CRM", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Ping.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/crm/ping", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "Authenticated health check."
+        },
+        {
+          "info": { "name": "List contacts.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/crm/contacts", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List unified contacts across the linked CRM."
+        },
+        {
+          "info": { "name": "Create contact.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/crm/contacts",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "body": { "type": "json", "data": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\"\n}" }
+          },
+          "docs": "Create a unified contact."
+        },
+        {
+          "info": { "name": "Get contact.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/crm/contacts/:id",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "params": [{ "name": "id", "value": "", "type": "path", "description": "The unified contact id." }]
+          },
+          "docs": "Get a unified contact by id."
+        },
+        {
+          "info": { "name": "Update contact.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.revert.dev/crm/contacts/:id",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "params": [{ "name": "id", "value": "", "type": "path", "description": "The unified contact id." }],
+            "body": { "type": "json", "data": "{\n  \"email\": \"jane.doe@example.com\"\n}" }
+          },
+          "docs": "Update a unified contact."
+        },
+        {
+          "info": { "name": "Search contacts.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/crm/contacts/search",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "body": { "type": "json", "data": "{\n  \"searchCriteria\": {}\n}" }
+          },
+          "docs": "Search unified contacts."
+        },
+        {
+          "info": { "name": "List deals.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/crm/deals", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List unified deals."
+        },
+        {
+          "info": { "name": "List companies.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/crm/companies", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List unified companies."
+        },
+        {
+          "info": { "name": "List leads.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/crm/leads", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List unified leads."
+        }
+      ]
+    },
+    {
+      "info": { "name": "CRM Proxy", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "CRM passthrough proxy.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/crm/proxy",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "body": { "type": "json", "data": "{\n  \"path\": \"/\",\n  \"method\": \"GET\"\n}" }
+          },
+          "docs": "Forward a native request to the underlying CRM provider using the linked connection."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Chat", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List channels.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/chat/channels", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List channels in the linked messaging provider (Slack, Discord, MS Teams)."
+        },
+        {
+          "info": { "name": "List users.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/chat/users", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List users in the linked messaging provider."
+        },
+        {
+          "info": { "name": "Send message.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/chat/message",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "body": { "type": "json", "data": "{\n  \"text\": \"Hello from Revert\",\n  \"channelId\": \"\"\n}" }
+          },
+          "docs": "Post a message to a channel."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Ticketing", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List tasks.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/ticket/tasks", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List unified ticket tasks (Jira, Trello, Linear, ClickUp)."
+        },
+        {
+          "info": { "name": "Create task.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/ticket/tasks",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Create a unified ticket task."
+        },
+        {
+          "info": { "name": "List collections.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/ticket/collections", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List collections (projects/boards) in the linked ticketing provider."
+        },
+        {
+          "info": { "name": "List comments.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/ticket/comments", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "List unified ticket comments."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Connection Management", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Get connection.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/connection", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "Get the linked connection for the tenant."
+        },
+        {
+          "info": { "name": "List all connections.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.revert.dev/connection/all" },
+          "docs": "List all connections for the account."
+        },
+        {
+          "info": { "name": "Delete connection.", "type": "http" },
+          "http": { "method": "DELETE", "url": "https://api.revert.dev/connection", "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }] },
+          "docs": "Delete the linked connection for the tenant."
+        },
+        {
+          "info": { "name": "Create connection webhook.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/connection/webhook",
+            "headers": [{ "name": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "body": { "type": "json", "data": "{\n  \"webhookUrl\": \"https://example.com/webhooks/revert\"\n}" }
+          },
+          "docs": "Register a webhook for connection events."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Metadata", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Get integrations config.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/metadata/crms?revertPublicToken=",
+            "params": [{ "name": "revertPublicToken", "value": "", "type": "query", "description": "The environment's public token." }]
+          },
+          "docs": "Get the integrations available for an environment from its public token."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

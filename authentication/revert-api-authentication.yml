@@ -1,0 +1,47 @@
+generated: '2026-07-12'
+method: derived
+source: openapi/revert-api-openapi.yml
+summary:
+  types:
+  - apiKey
+schemes:
+- name: revertApiToken
+  type: apiKey
+  in: header
+  headerName: x-revert-api-token
+  description: >-
+    Your Revert API key (private token), found on the Revert dashboard for an
+    environment (Production or Sandbox). Sent on every request as the
+    `x-revert-api-token` header. On self-hosted deployments this is the token of
+    your own Revert instance.
+  sources:
+  - openapi/revert-api-openapi.yml
+  - https://github.com/revertinc/revert
+- name: revertTenantId
+  type: apiKey
+  in: header
+  headerName: x-revert-t-id
+  description: >-
+    The tenant / customer id (t_id) captured when a customer linked their
+    third-party account through the Revert connect flow. Required on unified data
+    endpoints (CRM, chat, ticketing, accounting, ATS) and connection endpoints so
+    Revert knows which linked connection and refreshed OAuth token to use.
+  sources:
+  - openapi/revert-api-openapi.yml
+  - https://github.com/revertinc/revert
+- name: revertApiVersion
+  type: apiKey
+  in: header
+  headerName: x-api-version
+  description: >-
+    Optional Revert API version selector. If omitted, Revert defaults to the
+    latest version of the API.
+  sources:
+  - https://github.com/revertinc/revert
+notes: >-
+  Revert does not use OAuth bearer tokens for its own API - the end-user OAuth to
+  the downstream provider (Salesforce, HubSpot, Slack, Jira, etc.) is handled by
+  Revert during the connect flow, and Revert transparently refreshes those tokens.
+  The frontend connect SDK uses a separate public token (revertPublicToken) to
+  initiate a connection and to subscribe to the SSE connect-status stream; that
+  public token is not used to authorize server-side data calls.

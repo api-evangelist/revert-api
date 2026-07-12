@@ -1,0 +1,283 @@
+{
+  "info": {
+    "name": "Revert Unified API",
+    "description": "Open-source unified API for product integrations (CRM, chat, ticketing, accounting, ATS) with connection management and a passthrough proxy. Auth: x-revert-api-token header + x-revert-t-id tenant header (+ optional x-api-version). Base URL: https://api.revert.dev (Revert Cloud - RETIRED as of 2026-07-12) or http://localhost:4001 (self-hosted). Source: github.com/revertinc/revert (AGPL-3.0). Revert has joined Ampersand.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.revert.dev", "type": "string" },
+    { "key": "revertApiToken", "value": "", "type": "string" },
+    { "key": "tenantId", "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "x-revert-api-token", "type": "string" },
+      { "key": "value", "value": "{{revertApiToken}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "CRM",
+      "item": [
+        {
+          "name": "Ping",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/crm/ping", "host": ["{{baseUrl}}"], "path": ["crm", "ping"] },
+            "description": "Authenticated health check."
+          }
+        },
+        {
+          "name": "List contacts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/crm/contacts", "host": ["{{baseUrl}}"], "path": ["crm", "contacts"] },
+            "description": "List unified contacts across the linked CRM."
+          }
+        },
+        {
+          "name": "Create contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+1-555-0100\"\n}" },
+            "url": { "raw": "{{baseUrl}}/crm/contacts", "host": ["{{baseUrl}}"], "path": ["crm", "contacts"] },
+            "description": "Create a unified contact."
+          }
+        },
+        {
+          "name": "Get contact",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/crm/contacts/:id", "host": ["{{baseUrl}}"], "path": ["crm", "contacts", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Get a unified contact by id."
+          }
+        },
+        {
+          "name": "Update contact",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane.doe@example.com\"\n}" },
+            "url": { "raw": "{{baseUrl}}/crm/contacts/:id", "host": ["{{baseUrl}}"], "path": ["crm", "contacts", ":id"], "variable": [{ "key": "id", "value": "" }] },
+            "description": "Update a unified contact."
+          }
+        },
+        {
+          "name": "Search contacts",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"searchCriteria\": {}\n}" },
+            "url": { "raw": "{{baseUrl}}/crm/contacts/search", "host": ["{{baseUrl}}"], "path": ["crm", "contacts", "search"] },
+            "description": "Search unified contacts."
+          }
+        },
+        {
+          "name": "List deals",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/crm/deals", "host": ["{{baseUrl}}"], "path": ["crm", "deals"] },
+            "description": "List unified deals."
+          }
+        },
+        {
+          "name": "List companies",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/crm/companies", "host": ["{{baseUrl}}"], "path": ["crm", "companies"] },
+            "description": "List unified companies."
+          }
+        },
+        {
+          "name": "List leads",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/crm/leads", "host": ["{{baseUrl}}"], "path": ["crm", "leads"] },
+            "description": "List unified leads."
+          }
+        }
+      ]
+    },
+    {
+      "name": "CRM Proxy",
+      "item": [
+        {
+          "name": "CRM passthrough proxy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"path\": \"/\",\n  \"method\": \"GET\"\n}" },
+            "url": { "raw": "{{baseUrl}}/crm/proxy", "host": ["{{baseUrl}}"], "path": ["crm", "proxy"] },
+            "description": "Forward a native request to the underlying CRM provider using the linked connection."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "List channels",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/chat/channels", "host": ["{{baseUrl}}"], "path": ["chat", "channels"] },
+            "description": "List channels in the linked messaging provider (Slack, Discord, MS Teams)."
+          }
+        },
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/chat/users", "host": ["{{baseUrl}}"], "path": ["chat", "users"] },
+            "description": "List users in the linked messaging provider."
+          }
+        },
+        {
+          "name": "Send message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Hello from Revert\",\n  \"channelId\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/chat/message", "host": ["{{baseUrl}}"], "path": ["chat", "message"] },
+            "description": "Post a message to a channel."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ticketing",
+      "item": [
+        {
+          "name": "List tasks",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/ticket/tasks", "host": ["{{baseUrl}}"], "path": ["ticket", "tasks"] },
+            "description": "List unified ticket tasks (Jira, Trello, Linear, ClickUp)."
+          }
+        },
+        {
+          "name": "Create task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/ticket/tasks", "host": ["{{baseUrl}}"], "path": ["ticket", "tasks"] },
+            "description": "Create a unified ticket task."
+          }
+        },
+        {
+          "name": "List collections",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/ticket/collections", "host": ["{{baseUrl}}"], "path": ["ticket", "collections"] },
+            "description": "List collections (projects/boards) in the linked ticketing provider."
+          }
+        },
+        {
+          "name": "List comments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/ticket/comments", "host": ["{{baseUrl}}"], "path": ["ticket", "comments"] },
+            "description": "List unified ticket comments."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Connection Management",
+      "item": [
+        {
+          "name": "Get connection",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/connection", "host": ["{{baseUrl}}"], "path": ["connection"] },
+            "description": "Get the linked connection for the tenant."
+          }
+        },
+        {
+          "name": "List all connections",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/connection/all", "host": ["{{baseUrl}}"], "path": ["connection", "all"] },
+            "description": "List all connections for the account."
+          }
+        },
+        {
+          "name": "Delete connection",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "x-revert-t-id", "value": "{{tenantId}}" }],
+            "url": { "raw": "{{baseUrl}}/connection", "host": ["{{baseUrl}}"], "path": ["connection"] },
+            "description": "Delete the linked connection for the tenant."
+          }
+        },
+        {
+          "name": "Create connection webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-revert-t-id", "value": "{{tenantId}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"webhookUrl\": \"https://example.com/webhooks/revert\"\n}" },
+            "url": { "raw": "{{baseUrl}}/connection/webhook", "host": ["{{baseUrl}}"], "path": ["connection", "webhook"] },
+            "description": "Register a webhook for connection events."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Metadata",
+      "item": [
+        {
+          "name": "Get integrations config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metadata/crms?revertPublicToken=",
+              "host": ["{{baseUrl}}"],
+              "path": ["metadata", "crms"],
+              "query": [{ "key": "revertPublicToken", "value": "" }]
+            },
+            "description": "Get the integrations available for an environment from its public token."
+          }
+        }
+      ]
+    }
+  ]
+}

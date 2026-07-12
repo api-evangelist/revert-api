@@ -1,0 +1,128 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Revert
+providerId: revert-api
+created: '2026-07-12'
+modified: '2026-07-12'
+reconciled: false
+tags:
+- Unified API
+- Embedded iPaaS
+- Integrations
+- Open Source
+- Plans
+description: >-
+  Revert had two consumption models. The core platform is open source (AGPL-3.0)
+  and free to self-host via Docker Compose - in that model there is no vendor
+  invoice and no connection or API-call caps beyond your own infrastructure. Revert
+  Cloud was the managed offering, historically packaged as a free developer tier
+  plus paid usage tiers priced by number of linked connections / integrated
+  accounts, with a custom enterprise tier. IMPORTANT - the hosted Revert Cloud
+  service has been retired (Revert joined Ampersand; revert.dev no longer resolves
+  as of 2026-07-12), so the hosted plans below are historical/modeled and the
+  self-host plan is the live path. Exact hosted rates are not reconciled here.
+notes: >-
+  Hosted Cloud tiers and per-connection prices are modeled from the general unified-API
+  market and Revert's historical positioning (bootstrapped, ~$550K ARR per third-party
+  trackers); they are NOT confirmed live rates and the hosted billing surface is gone.
+  For current commercial pricing, teams are directed to Ampersand (withampersand.com).
+  The self-hosted plan is grounded in the AGPL-3.0 repository.
+sources:
+- https://github.com/revertinc/revert
+- https://www.revert.dev/
+- https://news.ycombinator.com/item?id=37995761
+plans:
+- id: revert-open-source
+  name: Open Source (Self-Hosted)
+  type: free
+  description: >-
+    The full Revert unified API platform, AGPL-3.0 licensed and self-hostable via
+    Docker Compose. Includes all unified modules (CRM, chat, ticketing, accounting,
+    ATS), connection management, webhooks, the passthrough proxy, and the frontend
+    connect SDKs. Unlimited connections and API calls, bounded only by your own
+    infrastructure. This is the live, supported-by-community path today.
+  entries:
+  - label: Self-Hosted Connections
+    name: self_hosted_connections
+    type: usage
+    metric: connections
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: free (self-hosted; you provide infrastructure)
+    userMultiplied: false
+  elements:
+  - name: All Unified Modules
+  - name: Connection Management
+  - name: Passthrough Proxy
+  - name: Webhooks
+  - name: Frontend Connect SDKs
+- id: revert-cloud-free
+  name: Revert Cloud - Developer (RETIRED)
+  type: free
+  description: >-
+    Historical free managed tier for evaluation and early development, with a
+    bounded number of linked connections. Retired after the Ampersand transition.
+  entries:
+  - label: Included Connections
+    name: cloud_free_connections
+    type: usage
+    metric: connections
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: historically $0 up to the free-tier connection allowance (service retired)
+    userMultiplied: false
+  elements:
+  - name: Managed Hosting
+  - name: All Unified Modules
+- id: revert-cloud-growth
+  name: Revert Cloud - Usage (RETIRED)
+  type: usage
+  description: >-
+    Historical managed tier billed on the number of linked connections /
+    integrated customer accounts above the free allowance. Modeled, not reconciled;
+    the hosted billing surface no longer exists.
+  entries:
+  - label: Linked Connections
+    name: cloud_connections
+    type: usage
+    metric: connections
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: historically usage-based per linked connection (rate not reconciled; service retired)
+    userMultiplied: false
+  elements:
+  - name: Managed Hosting
+  - name: Higher Connection Volume
+  - name: Support
+- id: revert-enterprise
+  name: Enterprise / Custom (RETIRED)
+  type: enterprise
+  description: >-
+    Historical custom plan for high connection volume, self-managed with vendor
+    support, security reviews, and SLAs. Superseded by Ampersand's commercial
+    offering.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: historically contact sales (now via Ampersand)
+    userMultiplied: false
+  elements:
+  - name: Custom Volume Pricing
+  - name: SLAs and Support
+  - name: Self-Managed with Support
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
