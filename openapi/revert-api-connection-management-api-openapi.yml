@@ -1,0 +1,252 @@
+openapi: 3.0.3
+info:
+  title: Revert Unified Chat Connection Management API
+  description: 'Revert is an open-source unified API for building product integrations. A single set of REST endpoints normalizes third-party CRMs, chat/messaging, ticketing, accounting, and ATS providers into unified data models, while Revert manages OAuth connections, token refresh, retries, and a passthrough proxy for provider-native calls.
+
+
+    Authentication uses an `x-revert-api-token` header (your Revert API key) plus an `x-revert-t-id` tenant header identifying the linked customer connection, and an optional `x-api-version` header.
+
+
+    STATUS - The hosted Revert Cloud service (https://api.revert.dev) has been retired; Revert has joined Ampersand and revert.dev no longer resolves as of 2026-07-12. This specification is preserved from the open-source, self-hostable backend (github.com/revertinc/revert). Paths, methods, headers, and unified fields were read from the repository''s Fern API definition (fern/definition/) and Express route registration; response payload schemas are modeled from the unified type definitions and are simplified where noted.'
+  version: '1.0'
+  contact:
+    name: Revert
+    url: https://github.com/revertinc/revert
+  license:
+    name: AGPL-3.0
+    url: https://github.com/revertinc/revert/blob/main/LICENSE
+servers:
+- url: https://api.revert.dev
+  description: Revert Cloud (hosted) - RETIRED, DNS no longer resolves as of 2026-07-12.
+- url: http://localhost:4001
+  description: Self-hosted (default SERVER_PORT=4001).
+security:
+- revertApiToken: []
+  revertTenantId: []
+tags:
+- name: Connection Management
+  description: Manage linked third-party connections and connection webhooks per tenant.
+paths:
+  /connection:
+    get:
+      operationId: getConnection
+      tags:
+      - Connection Management
+      summary: Get a connection
+      description: Get details of the linked connection for the tenant identified by x-revert-t-id.
+      responses:
+        '200':
+          $ref: '#/components/responses/Connection'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteConnection
+      tags:
+      - Connection Management
+      summary: Delete a connection
+      description: Delete the linked connection for the tenant identified by x-revert-t-id.
+      responses:
+        '200':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /connection/all:
+    get:
+      operationId: getAllConnections
+      tags:
+      - Connection Management
+      summary: List all connections
+      description: Get all connections for the account associated with the API token.
+      responses:
+        '200':
+          $ref: '#/components/responses/ConnectionList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /connection/webhook:
+    get:
+      operationId: getConnectionWebhook
+      tags:
+      - Connection Management
+      summary: Get a connection webhook
+      responses:
+        '200':
+          $ref: '#/components/responses/Envelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createConnectionWebhook
+      tags:
+      - Connection Management
+      summary: Create a connection webhook
+      description: Register a webhook URL that receives connection events for the tenant.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - webhookUrl
+              properties:
+                webhookUrl:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          $ref: '#/components/responses/Envelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteConnectionWebhook
+      tags:
+      - Connection Management
+      summary: Delete a connection webhook
+      responses:
+        '200':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /connection/import:
+    post:
+      operationId: importConnections
+      tags:
+      - Connection Management
+      summary: Bulk import connections
+      description: One-time bulk import of existing connections for an environment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                connections:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+      responses:
+        '200':
+          $ref: '#/components/responses/Envelope'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /connection/integration-status/{revertPublicToken}:
+    get:
+      operationId: getConnectionIntegrationStatus
+      tags:
+      - Connection Management
+      summary: OAuth connect status (Server-Sent Events)
+      description: Streams the OAuth connect event status for a tenant as HTTP Server-Sent Events (text/event-stream). This is one-way HTTP streaming, not WebSocket.
+      security: []
+      parameters:
+      - name: revertPublicToken
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: tenantId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: An SSE stream of connect status messages.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+components:
+  responses:
+    ConnectionList:
+      description: All connections for the account.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Connection'
+    Connection:
+      description: A single connection.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Connection'
+    Envelope:
+      description: Standard status-wrapped response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Envelope'
+    Unauthorized:
+      description: Missing or invalid x-revert-api-token / x-revert-t-id.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Deleted:
+      description: Deletion result.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              deleted:
+                type: boolean
+  schemas:
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: string
+        errorMessage: {}
+    Envelope:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: string
+          nullable: true
+      additionalProperties: true
+    Connection:
+      type: object
+      description: A linked third-party connection. Modeled from the unified Connection type.
+      properties:
+        tenantId:
+          type: string
+        tpId:
+          type: string
+          description: The third-party provider id (e.g. hubspot, salesforce, slack, jira).
+        tpCustomerId:
+          type: string
+        appId:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+      additionalProperties: true
+  securitySchemes:
+    revertApiToken:
+      type: apiKey
+      in: header
+      name: x-revert-api-token
+      description: Your Revert API key (private token) for the environment.
+    revertTenantId:
+      type: apiKey
+      in: header
+      name: x-revert-t-id
+      description: The tenant / customer id of the linked connection.

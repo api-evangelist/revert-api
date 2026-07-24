@@ -1,0 +1,108 @@
+openapi: 3.0.3
+info:
+  title: Revert Unified Chat Proxy API
+  description: 'Revert is an open-source unified API for building product integrations. A single set of REST endpoints normalizes third-party CRMs, chat/messaging, ticketing, accounting, and ATS providers into unified data models, while Revert manages OAuth connections, token refresh, retries, and a passthrough proxy for provider-native calls.
+
+
+    Authentication uses an `x-revert-api-token` header (your Revert API key) plus an `x-revert-t-id` tenant header identifying the linked customer connection, and an optional `x-api-version` header.
+
+
+    STATUS - The hosted Revert Cloud service (https://api.revert.dev) has been retired; Revert has joined Ampersand and revert.dev no longer resolves as of 2026-07-12. This specification is preserved from the open-source, self-hostable backend (github.com/revertinc/revert). Paths, methods, headers, and unified fields were read from the repository''s Fern API definition (fern/definition/) and Express route registration; response payload schemas are modeled from the unified type definitions and are simplified where noted.'
+  version: '1.0'
+  contact:
+    name: Revert
+    url: https://github.com/revertinc/revert
+  license:
+    name: AGPL-3.0
+    url: https://github.com/revertinc/revert/blob/main/LICENSE
+servers:
+- url: https://api.revert.dev
+  description: Revert Cloud (hosted) - RETIRED, DNS no longer resolves as of 2026-07-12.
+- url: http://localhost:4001
+  description: Self-hosted (default SERVER_PORT=4001).
+security:
+- revertApiToken: []
+  revertTenantId: []
+tags:
+- name: Proxy
+  description: Passthrough proxy to the underlying provider's native API.
+paths:
+  /crm/proxy:
+    post:
+      operationId: crmProxy
+      tags:
+      - Proxy
+      summary: CRM passthrough proxy
+      description: Forward a request to the underlying CRM provider's native API using the linked connection.
+      requestBody:
+        $ref: '#/components/requestBodies/Proxy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Proxy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /ticket/proxy:
+    post:
+      operationId: ticketProxy
+      tags:
+      - Proxy
+      summary: Ticketing passthrough proxy
+      requestBody:
+        $ref: '#/components/requestBodies/Proxy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Proxy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid x-revert-api-token / x-revert-t-id.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Proxy:
+      description: The raw response from the downstream provider.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
+  schemas:
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: string
+        errorMessage: {}
+  requestBodies:
+    Proxy:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: The provider-native request to forward (path, method, and body vary by provider).
+            properties:
+              path:
+                type: string
+              method:
+                type: string
+              body:
+                type: object
+                additionalProperties: true
+            additionalProperties: true
+  securitySchemes:
+    revertApiToken:
+      type: apiKey
+      in: header
+      name: x-revert-api-token
+      description: Your Revert API key (private token) for the environment.
+    revertTenantId:
+      type: apiKey
+      in: header
+      name: x-revert-t-id
+      description: The tenant / customer id of the linked connection.
