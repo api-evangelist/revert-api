@@ -1,0 +1,24 @@
+{
+  "provider": "revert-api",
+  "sources": [
+    "revert-api-chat-api-openapi.yml",
+    "revert-api-connection-management-api-openapi.yml",
+    "revert-api-crm-api-openapi.yml",
+    "revert-api-metadata-api-openapi.yml",
+    "revert-api-proxy-api-openapi.yml",
+    "revert-api-ticketing-api-openapi.yml"
+  ],
+  "outputs": [
+    "revert-api-chat-api-openapi.yml",
+    "revert-api-connection-management-api-openapi.yml",
+    "revert-api-crm-api-openapi.yml",
+    "revert-api-metadata-api-openapi.yml",
+    "revert-api-proxy-api-openapi.yml",
+    "revert-api-ticketing-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

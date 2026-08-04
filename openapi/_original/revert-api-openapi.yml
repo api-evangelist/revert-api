@@ -1,0 +1,892 @@
+openapi: 3.0.3
+info:
+  title: Revert Unified API
+  description: >-
+    Revert is an open-source unified API for building product integrations. A
+    single set of REST endpoints normalizes third-party CRMs, chat/messaging,
+    ticketing, accounting, and ATS providers into unified data models, while Revert
+    manages OAuth connections, token refresh, retries, and a passthrough proxy for
+    provider-native calls.
+
+
+    Authentication uses an `x-revert-api-token` header (your Revert API key) plus an
+    `x-revert-t-id` tenant header identifying the linked customer connection, and an
+    optional `x-api-version` header.
+
+
+    STATUS - The hosted Revert Cloud service (https://api.revert.dev) has been
+    retired; Revert has joined Ampersand and revert.dev no longer resolves as of
+    2026-07-12. This specification is preserved from the open-source, self-hostable
+    backend (github.com/revertinc/revert). Paths, methods, headers, and unified
+    fields were read from the repository's Fern API definition (fern/definition/)
+    and Express route registration; response payload schemas are modeled from the
+    unified type definitions and are simplified where noted.
+  version: '1.0'
+  contact:
+    name: Revert
+    url: https://github.com/revertinc/revert
+  license:
+    name: AGPL-3.0
+    url: https://github.com/revertinc/revert/blob/main/LICENSE
+servers:
+  - url: https://api.revert.dev
+    description: Revert Cloud (hosted) - RETIRED, DNS no longer resolves as of 2026-07-12.
+  - url: http://localhost:4001
+    description: Self-hosted (default SERVER_PORT=4001).
+security:
+  - revertApiToken: []
+    revertTenantId: []
+tags:
+  - name: CRM
+    description: Unified CRM models - contacts, leads, companies, deals, notes, events, tasks, users.
+  - name: Chat
+    description: Unified messaging models - channels, users, messages.
+  - name: Ticketing
+    description: Unified ticketing models - tasks, users, comments, collections.
+  - name: Proxy
+    description: Passthrough proxy to the underlying provider's native API.
+  - name: Connection Management
+    description: Manage linked third-party connections and connection webhooks per tenant.
+  - name: Metadata
+    description: Environment / app configuration for the connect UI.
+paths:
+  /crm/ping:
+    get:
+      operationId: pingCrm
+      tags: [CRM]
+      summary: Health check (CRM)
+      description: Simple authenticated ping to verify credentials and connectivity.
+      responses:
+        '200': { $ref: '#/components/responses/Ping' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/contacts:
+    get:
+      operationId: getContacts
+      tags: [CRM]
+      summary: List contacts
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200': { $ref: '#/components/responses/ContactList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createContact
+      tags: [CRM]
+      summary: Create a contact
+      requestBody: { $ref: '#/components/requestBodies/ContactWrite' }
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/contacts/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getContact
+      tags: [CRM]
+      summary: Get a contact
+      responses:
+        '200': { $ref: '#/components/responses/ContactSingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateContact
+      tags: [CRM]
+      summary: Update a contact
+      requestBody: { $ref: '#/components/requestBodies/ContactWrite' }
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/contacts/search:
+    post:
+      operationId: searchContacts
+      tags: [CRM]
+      summary: Search contacts
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/ContactList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/leads:
+    get:
+      operationId: getLeads
+      tags: [CRM]
+      summary: List leads
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createLead
+      tags: [CRM]
+      summary: Create a lead
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/leads/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getLead
+      tags: [CRM]
+      summary: Get a lead
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateLead
+      tags: [CRM]
+      summary: Update a lead
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/leads/search:
+    post:
+      operationId: searchLeads
+      tags: [CRM]
+      summary: Search leads
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/companies:
+    get:
+      operationId: getCompanies
+      tags: [CRM]
+      summary: List companies
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createCompany
+      tags: [CRM]
+      summary: Create a company
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/companies/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getCompany
+      tags: [CRM]
+      summary: Get a company
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateCompany
+      tags: [CRM]
+      summary: Update a company
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/companies/search:
+    post:
+      operationId: searchCompanies
+      tags: [CRM]
+      summary: Search companies
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/deals:
+    get:
+      operationId: getDeals
+      tags: [CRM]
+      summary: List deals
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createDeal
+      tags: [CRM]
+      summary: Create a deal
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/deals/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getDeal
+      tags: [CRM]
+      summary: Get a deal
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateDeal
+      tags: [CRM]
+      summary: Update a deal
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/deals/search:
+    post:
+      operationId: searchDeals
+      tags: [CRM]
+      summary: Search deals
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/notes:
+    get:
+      operationId: getNotes
+      tags: [CRM]
+      summary: List notes
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createNote
+      tags: [CRM]
+      summary: Create a note
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/notes/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getNote
+      tags: [CRM]
+      summary: Get a note
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateNote
+      tags: [CRM]
+      summary: Update a note
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/notes/search:
+    post:
+      operationId: searchNotes
+      tags: [CRM]
+      summary: Search notes
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/events:
+    get:
+      operationId: getEvents
+      tags: [CRM]
+      summary: List events
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createEvent
+      tags: [CRM]
+      summary: Create an event
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/events/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getEvent
+      tags: [CRM]
+      summary: Get an event
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateEvent
+      tags: [CRM]
+      summary: Update an event
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      operationId: deleteEvent
+      tags: [CRM]
+      summary: Delete an event
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /crm/events/search:
+    post:
+      operationId: searchEvents
+      tags: [CRM]
+      summary: Search events
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/tasks:
+    get:
+      operationId: getCrmTasks
+      tags: [CRM]
+      summary: List tasks
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createCrmTask
+      tags: [CRM]
+      summary: Create a task
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/tasks/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getCrmTask
+      tags: [CRM]
+      summary: Get a task
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateCrmTask
+      tags: [CRM]
+      summary: Update a task
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/tasks/search:
+    post:
+      operationId: searchCrmTasks
+      tags: [CRM]
+      summary: Search tasks
+      requestBody: { $ref: '#/components/requestBodies/Search' }
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/users:
+    get:
+      operationId: getCrmUsers
+      tags: [CRM]
+      summary: List users
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createCrmUser
+      tags: [CRM]
+      summary: Create a user
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /crm/users/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getCrmUser
+      tags: [CRM]
+      summary: Get a user
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /crm/proxy:
+    post:
+      operationId: crmProxy
+      tags: [Proxy]
+      summary: CRM passthrough proxy
+      description: Forward a request to the underlying CRM provider's native API using the linked connection.
+      requestBody: { $ref: '#/components/requestBodies/Proxy' }
+      responses:
+        '200': { $ref: '#/components/responses/Proxy' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /chat/channels:
+    get:
+      operationId: getChatChannels
+      tags: [Chat]
+      summary: List channels
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /chat/users:
+    get:
+      operationId: getChatUsers
+      tags: [Chat]
+      summary: List chat users
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /chat/message:
+    post:
+      operationId: sendChatMessage
+      tags: [Chat]
+      summary: Send a message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text: { type: string }
+                channelId: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/tasks:
+    get:
+      operationId: getTicketTasks
+      tags: [Ticketing]
+      summary: List ticket tasks
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createTicketTask
+      tags: [Ticketing]
+      summary: Create a ticket task
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/tasks/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getTicketTask
+      tags: [Ticketing]
+      summary: Get a ticket task
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateTicketTask
+      tags: [Ticketing]
+      summary: Update a ticket task
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/users:
+    get:
+      operationId: getTicketUsers
+      tags: [Ticketing]
+      summary: List ticket users
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/users/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getTicketUser
+      tags: [Ticketing]
+      summary: Get a ticket user
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /ticket/comments:
+    get:
+      operationId: getTicketComments
+      tags: [Ticketing]
+      summary: List ticket comments
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createTicketComment
+      tags: [Ticketing]
+      summary: Create a ticket comment
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/comments/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getTicketComment
+      tags: [Ticketing]
+      summary: Get a ticket comment
+      responses:
+        '200': { $ref: '#/components/responses/EntitySingle' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updateTicketComment
+      tags: [Ticketing]
+      summary: Update a ticket comment
+      responses:
+        '200': { $ref: '#/components/responses/CreateOrUpdate' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/collections:
+    get:
+      operationId: getTicketCollections
+      tags: [Ticketing]
+      summary: List ticket collections
+      description: Collections (projects/boards) available in the linked ticketing provider.
+      responses:
+        '200': { $ref: '#/components/responses/EntityList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /ticket/proxy:
+    post:
+      operationId: ticketProxy
+      tags: [Proxy]
+      summary: Ticketing passthrough proxy
+      requestBody: { $ref: '#/components/requestBodies/Proxy' }
+      responses:
+        '200': { $ref: '#/components/responses/Proxy' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /connection:
+    get:
+      operationId: getConnection
+      tags: [Connection Management]
+      summary: Get a connection
+      description: Get details of the linked connection for the tenant identified by x-revert-t-id.
+      responses:
+        '200': { $ref: '#/components/responses/Connection' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      operationId: deleteConnection
+      tags: [Connection Management]
+      summary: Delete a connection
+      description: Delete the linked connection for the tenant identified by x-revert-t-id.
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /connection/all:
+    get:
+      operationId: getAllConnections
+      tags: [Connection Management]
+      summary: List all connections
+      description: Get all connections for the account associated with the API token.
+      responses:
+        '200': { $ref: '#/components/responses/ConnectionList' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /connection/webhook:
+    get:
+      operationId: getConnectionWebhook
+      tags: [Connection Management]
+      summary: Get a connection webhook
+      responses:
+        '200': { $ref: '#/components/responses/Envelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createConnectionWebhook
+      tags: [Connection Management]
+      summary: Create a connection webhook
+      description: Register a webhook URL that receives connection events for the tenant.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [webhookUrl]
+              properties:
+                webhookUrl: { type: string, format: uri }
+      responses:
+        '200': { $ref: '#/components/responses/Envelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      operationId: deleteConnectionWebhook
+      tags: [Connection Management]
+      summary: Delete a connection webhook
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /connection/import:
+    post:
+      operationId: importConnections
+      tags: [Connection Management]
+      summary: Bulk import connections
+      description: One-time bulk import of existing connections for an environment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                connections:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+      responses:
+        '200': { $ref: '#/components/responses/Envelope' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /connection/integration-status/{revertPublicToken}:
+    get:
+      operationId: getConnectionIntegrationStatus
+      tags: [Connection Management]
+      summary: OAuth connect status (Server-Sent Events)
+      description: >-
+        Streams the OAuth connect event status for a tenant as HTTP Server-Sent
+        Events (text/event-stream). This is one-way HTTP streaming, not WebSocket.
+      security: []
+      parameters:
+        - name: revertPublicToken
+          in: path
+          required: true
+          schema: { type: string }
+        - name: tenantId
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: An SSE stream of connect status messages.
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /metadata/crms:
+    get:
+      operationId: getMetadataCrms
+      tags: [Metadata]
+      summary: Get environment integrations config
+      description: Retrieve the list of integrations available for the environment identified by its public token.
+      security: []
+      parameters:
+        - name: revertPublicToken
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { $ref: '#/components/responses/Envelope' }
+components:
+  securitySchemes:
+    revertApiToken:
+      type: apiKey
+      in: header
+      name: x-revert-api-token
+      description: Your Revert API key (private token) for the environment.
+    revertTenantId:
+      type: apiKey
+      in: header
+      name: x-revert-t-id
+      description: The tenant / customer id of the linked connection.
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The unified Revert id (or downstream remote id) of the object.
+      schema: { type: string }
+    Fields:
+      name: fields
+      in: query
+      required: false
+      description: Optional comma-separated list of additional non-unified fields to include.
+      schema: { type: string }
+    PageSize:
+      name: pageSize
+      in: query
+      required: false
+      schema: { type: integer }
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Opaque pagination cursor.
+      schema: { type: string }
+  requestBodies:
+    ContactWrite:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ContactWrite' }
+    Search:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              searchCriteria:
+                type: object
+                additionalProperties: true
+    Proxy:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            description: The provider-native request to forward (path, method, and body vary by provider).
+            properties:
+              path: { type: string }
+              method: { type: string }
+              body:
+                type: object
+                additionalProperties: true
+            additionalProperties: true
+  responses:
+    Ping:
+      description: Pong.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              message: { type: string }
+    Unauthorized:
+      description: Missing or invalid x-revert-api-token / x-revert-t-id.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Deleted:
+      description: Deletion result.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              deleted: { type: boolean }
+    Envelope:
+      description: Standard status-wrapped response.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Envelope' }
+    CreateOrUpdate:
+      description: Create/update result.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              message: { type: string }
+              result: {}
+    ContactSingle:
+      description: A single contact.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              result: { $ref: '#/components/schemas/Contact' }
+    ContactList:
+      description: A list of contacts.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              next: { type: string, nullable: true }
+              previous: { type: string, nullable: true }
+              results:
+                type: array
+                items: { $ref: '#/components/schemas/Contact' }
+    EntitySingle:
+      description: A single unified object.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              result:
+                type: object
+                additionalProperties: true
+    EntityList:
+      description: A list of unified objects.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status: { type: string }
+              next: { type: string, nullable: true }
+              previous: { type: string, nullable: true }
+              results:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+    Connection:
+      description: A single connection.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Connection' }
+    ConnectionList:
+      description: All connections for the account.
+      content:
+        application/json:
+          schema:
+            type: array
+            items: { $ref: '#/components/schemas/Connection' }
+    Proxy:
+      description: The raw response from the downstream provider.
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
+  schemas:
+    Error:
+      type: object
+      properties:
+        status: { type: string }
+        error: { type: string }
+        errorMessage: {}
+    Envelope:
+      type: object
+      properties:
+        status: { type: string }
+        error: { type: string, nullable: true }
+      additionalProperties: true
+    CommonUnifiedFields:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique id of this object in Revert.
+        remoteId:
+          type: string
+          description: The unique id of this object in the downstream provider.
+        createdTimestamp: {}
+        updatedTimestamp: {}
+        additional:
+          type: object
+          description: Non-unified / provider-specific fields.
+          additionalProperties: true
+    ContactWrite:
+      type: object
+      description: Modeled from Revert's unified contact fields.
+      properties:
+        firstName: { type: string }
+        lastName: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        additional:
+          type: object
+          additionalProperties: true
+    Contact:
+      allOf:
+        - $ref: '#/components/schemas/CommonUnifiedFields'
+        - $ref: '#/components/schemas/ContactWrite'
+    Connection:
+      type: object
+      description: A linked third-party connection. Modeled from the unified Connection type.
+      properties:
+        tenantId: { type: string }
+        tpId:
+          type: string
+          description: The third-party provider id (e.g. hubspot, salesforce, slack, jira).
+        tpCustomerId: { type: string }
+        appId: { type: string }
+        status: { type: string }
+        createdAt: { type: string }
+      additionalProperties: true
