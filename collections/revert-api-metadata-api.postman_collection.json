@@ -1,0 +1,141 @@
+{
+  "item": [
+    {
+      "id": "e105ea7a-5b1e-40e8-bdbf-5e3d6ecb1ba1",
+      "name": "Metadata",
+      "description": {
+        "content": "Environment / app configuration for the connect UI.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "be54f538-0417-4ff0-9aad-8bf460ccd9a8",
+          "name": "Get environment integrations config",
+          "request": {
+            "name": "Get environment integrations config",
+            "description": {
+              "content": "Retrieve the list of integrations available for the environment identified by its public token.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "metadata",
+                "crms"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "revertPublicToken",
+                  "value": "<string>",
+                  "description": "(Required) "
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f11eabe3-054d-4a01-90a5-45ffc4e14c45",
+              "name": "Standard status-wrapped response.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "metadata",
+                    "crms"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "revertPublicToken",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "x-revert-api-token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"string\",\n  \"error\": \"string\",\n  \"key_0\": 8593,\n  \"key_1\": \"string\",\n  \"key_2\": 3297,\n  \"key_3\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.revert.dev",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-revert-api-token"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "accba19c-5691-45d2-bd3a-60d5eb30b877",
+    "name": "Revert Unified Chat Metadata API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Revert is an open-source unified API for building product integrations. A single set of REST endpoints normalizes third-party CRMs, chat/messaging, ticketing, accounting, and ATS providers into unified data models, while Revert manages OAuth connections, token refresh, retries, and a passthrough proxy for provider-native calls.\n\nAuthentication uses an `x-revert-api-token` header (your Revert API key) plus an `x-revert-t-id` tenant header identifying the linked customer connection, and an optional `x-api-version` header.\n\nSTATUS - The hosted Revert Cloud service (https://api.revert.dev) has been retired; Revert has joined Ampersand and revert.dev no longer resolves as of 2026-07-12. This specification is preserved from the open-source, self-hostable backend (github.com/revertinc/revert). Paths, methods, headers, and unified fields were read from the repository's Fern API definition (fern/definition/) and Express route registration; response payload schemas are modeled from the unified type definitions and are simplified where noted.\n\nContact Support:\n Name: Revert",
+      "type": "text/plain"
+    }
+  }
+}

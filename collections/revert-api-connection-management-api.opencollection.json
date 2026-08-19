@@ -1,0 +1,134 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Revert Unified Chat Connection Management API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-revert-api-token",
+      "value": "{{x-revert-api-token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Connection Management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/connection"
+          },
+          "docs": "Get details of the linked connection for the tenant identified by x-revert-t-id."
+        },
+        {
+          "info": {
+            "name": "Delete a connection",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.revert.dev/connection"
+          },
+          "docs": "Delete the linked connection for the tenant identified by x-revert-t-id."
+        },
+        {
+          "info": {
+            "name": "List all connections",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/connection/all"
+          },
+          "docs": "Get all connections for the account associated with the API token."
+        },
+        {
+          "info": {
+            "name": "Get a connection webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/connection/webhook"
+          },
+          "docs": "Get a connection webhook"
+        },
+        {
+          "info": {
+            "name": "Create a connection webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/connection/webhook",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Register a webhook URL that receives connection events for the tenant."
+        },
+        {
+          "info": {
+            "name": "Delete a connection webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.revert.dev/connection/webhook"
+          },
+          "docs": "Delete a connection webhook"
+        },
+        {
+          "info": {
+            "name": "Bulk import connections",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/connection/import",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "One-time bulk import of existing connections for an environment."
+        },
+        {
+          "info": {
+            "name": "OAuth connect status (Server-Sent Events)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/connection/integration-status/:revertPublicToken",
+            "params": [
+              {
+                "name": "revertPublicToken",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "tenantId",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Streams the OAuth connect event status for a tenant as HTTP Server-Sent Events (text/event-stream). This is one-way HTTP streaming, not WebSocket."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

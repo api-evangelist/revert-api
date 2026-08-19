@@ -1,0 +1,187 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Revert Unified Chat Ticketing API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-revert-api-token",
+      "value": "{{x-revert-api-token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Ticketing",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List ticket tasks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/tasks"
+          },
+          "docs": "List ticket tasks"
+        },
+        {
+          "info": {
+            "name": "Create a ticket task",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/ticket/tasks"
+          },
+          "docs": "Create a ticket task"
+        },
+        {
+          "info": {
+            "name": "Get a ticket task",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/tasks/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The unified Revert id (or downstream remote id) of the object."
+              }
+            ]
+          },
+          "docs": "Get a ticket task"
+        },
+        {
+          "info": {
+            "name": "Update a ticket task",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.revert.dev/ticket/tasks/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The unified Revert id (or downstream remote id) of the object."
+              }
+            ]
+          },
+          "docs": "Update a ticket task"
+        },
+        {
+          "info": {
+            "name": "List ticket users",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/users"
+          },
+          "docs": "List ticket users"
+        },
+        {
+          "info": {
+            "name": "Get a ticket user",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/users/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The unified Revert id (or downstream remote id) of the object."
+              }
+            ]
+          },
+          "docs": "Get a ticket user"
+        },
+        {
+          "info": {
+            "name": "List ticket comments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/comments"
+          },
+          "docs": "List ticket comments"
+        },
+        {
+          "info": {
+            "name": "Create a ticket comment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.revert.dev/ticket/comments"
+          },
+          "docs": "Create a ticket comment"
+        },
+        {
+          "info": {
+            "name": "Get a ticket comment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/comments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The unified Revert id (or downstream remote id) of the object."
+              }
+            ]
+          },
+          "docs": "Get a ticket comment"
+        },
+        {
+          "info": {
+            "name": "Update a ticket comment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.revert.dev/ticket/comments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The unified Revert id (or downstream remote id) of the object."
+              }
+            ]
+          },
+          "docs": "Update a ticket comment"
+        },
+        {
+          "info": {
+            "name": "List ticket collections",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.revert.dev/ticket/collections"
+          },
+          "docs": "Collections (projects/boards) available in the linked ticketing provider."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
