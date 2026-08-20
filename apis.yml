@@ -28,6 +28,15 @@ accessModel:
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/revert-api.png
 tags:
+- Unified-API
+- Embedded iPaaS
+- Integration
+- Product Integrations
+- Open-Source
+- CRM Integrations
+- Connectors
+- API Integration
+tags_raw:
 - Unified API
 - Embedded iPaaS
 - Integrations
