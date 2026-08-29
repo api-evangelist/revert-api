@@ -13,6 +13,18 @@ description: Revert is an open-source unified API for building product integrati
   verified 2026-07-12), so the documented REST surface below is preserved from the
   open-source repository and is usable via self-hosting. New teams are directed to
   Ampersand (withampersand.com).
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
